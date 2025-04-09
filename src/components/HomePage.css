@@ -1,0 +1,454 @@
+.homepage {
+    background-color: #f6f7f8;
+    min-height: 100vh;
+}
+
+.header {
+    background-color: white;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 12px 24px;
+}
+
+.header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.logo {
+    color: #4169E1;
+    font-size: 32px;
+    font-weight: bold;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.search-group {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 800px;
+}
+
+.search-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    padding: 12px 16px;
+    font-size: 16px;
+    color: #333;
+    min-width: 200px;
+}
+
+.search-input::placeholder {
+    color: #757575;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.search-button {
+    background: #4169E1;
+    border: none;
+    padding: 12px 24px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.location-button {
+    background: white;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #333;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    color: #666;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* İkonlar için gri renk */
+.bookmark-icon,
+.message-icon,
+.notification-icon {
+    color: #666;
+}
+
+/* Hover efektleri */
+.search-button:hover {
+    background: #3557c0;
+}
+
+.location-button:hover {
+    border-color: #999;
+}
+
+.icon-button:hover svg {
+    fill: #333;
+}
+
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.welcome-text {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.calendar {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.date-filters {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.date-filter {
+    padding: 0.5rem 1rem;
+    border: 1px solid #4a90e2;
+    border-radius: 20px;
+    background: none;
+    cursor: pointer;
+}
+
+.date-filter.active {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.event-filters {
+    display: flex;
+    gap: 1rem;
+}
+
+.filter-dropdown {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-image {
+    width: 100px;
+    height: 100px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.event-info {
+    flex: 1;
+}
+
+.event-type {
+    background-color: #e3f2fd;
+    color: #4a90e2;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.event-date {
+    color: #666;
+    margin-left: 1rem;
+}
+
+.event-title {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.event-organizer {
+    color: #666;
+    margin: 0;
+}
+
+.event-participants {
+    color: #666;
+    margin: 0.5rem 0 0 0;
+}
+
+.profile-section {
+    position: relative;
+}
+
+.profile-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.profile-icon > span:first-child {
+    width: 32px;
+    height: 32px;
+    background-color: #2319d6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    color: #666;
+    margin-left: 4px;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 200px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.profile-dropdown a {
+    display: block;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.profile-dropdown a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Dropdown menü için animasyon */
+.profile-dropdown {
+    animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdown ok işareti için stil */
+.profile-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    transform: rotate(45deg);
+    border-left: 1px solid rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.filters-section {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.filter-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filter-button:hover {
+    background-color: #ebebeb;
+}
+
+.dropdown-icon {
+    margin-left: 4px;
+    color: #666;
+}
+
+.reset-filters {
+    background: none;
+    border: none;
+    padding: 12px 16px;
+    color: #4169E1;
+    font-size: 15px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.reset-filters:hover {
+    color: #2850c8;
+    text-decoration: underline;
+}
+
+/* Aktif filtre için stil */
+.filter-button.active {
+    background-color: #e6e6e6;
+}
+
+.location-bar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.location-bar {
+    cursor: pointer;
+}
+
+.location-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 280px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 8px;
+    z-index: 1000;
+    padding: 12px;
+}
+
+.cities-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.city-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.city-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Scrollbar stilleri */
+.cities-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.cities-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.cities-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
+
+.cities-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
