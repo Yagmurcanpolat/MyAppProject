@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './InterestSelection.css';
 
 function InterestSelection() {
@@ -39,9 +40,11 @@ function InterestSelection() {
         }
     };
 
+    const navigate = useNavigate();
+
     const handleContinue = () => {
         console.log('Seçilen ilgi alanları:', selectedInterests);
-        // İlerleme işlemleri burada yapılacak
+        navigate('/profile');
     };
 
     return (

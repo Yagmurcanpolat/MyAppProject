@@ -1,51 +1,102 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './LoginPage2.css';
 
 function LoginPage2() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        rememberMe: false
+    });
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Giriş denemesi:', { email, password });
+        setError('');
+
+        try {
+            // Burada API çağrısı yapılacak
+            console.log('Giriş denemesi:', formData);
+            
+            // Başarılı giriş simülasyonu
+            navigate('/');
+        } catch (err) {
+            setError('E-posta veya şifre hatalı');
+        }
     };
 
     return (
-        <div className="login2-container">
-            <div className="login2-card">
-                <h1 className="login2-title">Eventify</h1>
-                
-                <div className="login2-form">
-                    <div className="form2-group">
-                        <label className="form2-label">E-posta:</label>
+        <div className="login-container">
+            <div className="login-card">
+                <div className="login-header">
+                    <h1>Eventify</h1>
+                    <p>Etkinlikleri Keşfet, Paylaş, Katıl</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="login-form">
+                    {error && <div className="error-message">{error}</div>}
+
+                    <div className="form-group">
+                        <label htmlFor="email">E-posta</label>
                         <input
                             type="email"
-                            className="form2-input"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="E-posta adresinizi girin"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
 
-                    <div className="form2-group">
-                        <label className="form2-label">Şifre:</label>
+                    <div className="form-group">
+                        <label htmlFor="password">Şifre</label>
                         <input
                             type="password"
-                            className="form2-input"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             placeholder="Şifrenizi girin"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
 
-                    <button className="login2-button" onClick={handleSubmit}>
+                    <div className="form-options">
+                        <label className="checkbox-label">
+                            <input
+                                type="checkbox"
+                                name="rememberMe"
+                                checked={formData.rememberMe}
+                                onChange={handleChange}
+                            />
+                            <span>Beni hatırla</span>
+                        </label>
+                        <Link to="/forgot-password" className="forgot-link">
+                            Şifremi Unuttum
+                        </Link>
+                    </div>
+
+                    <button type="submit" className="login-button">
                         Giriş Yap
                     </button>
 
-                    <div className="forgot2-password">
-                        <span className="forgot2-text">Şifremi Unuttum?</span>
+                    <div className="register-section">
+                        <p>Henüz hesabınız yok mu?</p>
+                        <Link to="/register" className="register-link">
+                            Hemen Kaydol
+                        </Link>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );
