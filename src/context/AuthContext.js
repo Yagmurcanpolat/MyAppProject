@@ -1,7 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-import { userService } from '../services/api';
+import userService from '../services/userService';
 
 // Varsayılan context değerleri
 const defaultContext = {
@@ -19,136 +19,92 @@ export const AuthContext = createContext(defaultContext);
 
 // Provider bileşeni
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Uygulama başladığında oturum durumunu kontrol etme
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        // AsyncStorage'dan kullanıcı bilgilerini al
-        const userToken = await AsyncStorage.getItem('@user_token');
-        const userData = await AsyncStorage.getItem('@user_data');
-        
-        if (userToken !== null && userData !== null) {
-          setUser(JSON.parse(userData));
-          setIsAuthenticated(true);
-        }
-      } catch (e) {
-        console.error('Error checking login status:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkLoginStatus();
+    checkUser();
   }, []);
 
-  // Giriş işlevi
+  const checkUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem('@user_token');
+      const userData = await AsyncStorage.getItem('@user_data');
+      
+      if (token && userData) {
+        setUser(JSON.parse(userData));
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const login = async (email, password) => {
     try {
       setLoading(true);
-
-      // Normalde burada API çağrısı yapılacak
-      // const response = await authService.login(email, password);
+      console.log('AuthContext: Attempting login with email:', email);
       
-      // Girilen email bilgisini kullanarak kullanıcı verisi oluştur
-      const mockUserData = {
-        id: 'user123',
-        name: email.split('@')[0], // Email adresinden kullanıcı adı oluştur
-        email: email,
-        avatar: 'https://source.unsplash.com/random/400x400/?portrait',
-        participationScore: 85,
-        interests: ['Technology', 'Music', 'Arts'],
-        location: 'Istanbul, Turkey',
-        attendedEvents: 3,
-        upcomingEvents: 2,
-        savedEvents: 5
-      };
+      const response = await userService.login(email, password);
+      console.log('AuthContext: Login response:', response);
       
-      const mockToken = 'mock_token_' + Date.now();
+      if (!response || !response.token) {
+        console.error('AuthContext: Invalid login response:', response);
+        throw new Error('Giriş başarısız oldu: Geçersiz yanıt');
+      }
       
-      // Kullanıcı bilgilerini kaydet
-      await AsyncStorage.setItem('@user_token', mockToken);
-      await AsyncStorage.setItem('@user_data', JSON.stringify(mockUserData));
+      // Token ve kullanıcı bilgilerini kaydet
+      await AsyncStorage.setItem('@user_token', response.token);
+      await AsyncStorage.setItem('@user_data', JSON.stringify(response.user));
       
-      setUser(mockUserData);
-      setIsAuthenticated(true);
-      
+      setUser(response.user);
       return { success: true };
     } catch (error) {
+      console.error('AuthContext: Login error:', error);
       return { 
         success: false, 
-        error: error.message || 'Login failed. Please try again.' 
+        error: error.message || 'Giriş yapılırken bir hata oluştu'
       };
     } finally {
       setLoading(false);
     }
   };
 
-  // Çıkış işlevi
+  const register = async (userData) => {
+    try {
+      setLoading(true);
+      console.log('Starting registration process...');
+      
+      const response = await userService.register(userData);
+      console.log('Registration successful:', response);
+      
+      // Store user data and token
+      await AsyncStorage.setItem('@user_token', response.token);
+      await AsyncStorage.setItem('@user_data', JSON.stringify(response.user));
+      
+      // Update the user state
+      setUser(response.user);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Registration failed:', error);
+      return { 
+        success: false, 
+        error: error.message || 'Kayıt işlemi başarısız oldu. Lütfen tekrar deneyin.'
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
-      setLoading(true);
-      
-      // AsyncStorage'dan kullanıcı verilerini temizle
       await AsyncStorage.removeItem('@user_token');
       await AsyncStorage.removeItem('@user_data');
-      
       setUser(null);
-      setIsAuthenticated(false);
-      
-      return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.message || 'Logout failed. Please try again.' 
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Kayıt işlevi
-  const register = async (name, email, password) => {
-    try {
-      setLoading(true);
-
-      // Normalde burada API çağrısı yapılacak
-      // const response = await authService.register(name, email, password);
-      
-      // Kullanıcının girdiği ad ve email bilgilerini kullan
-      const mockUserData = {
-        id: 'user_' + Date.now(),
-        name: name,
-        email: email,
-        avatar: 'https://source.unsplash.com/random/400x400/?portrait',
-        participationScore: 0,
-        interests: [],
-        location: 'Istanbul, Turkey',
-        attendedEvents: 0,
-        upcomingEvents: 0,
-        savedEvents: 0
-      };
-      
-      const mockToken = 'mock_token_' + Date.now();
-      
-      // Kullanıcı bilgilerini kaydet
-      await AsyncStorage.setItem('@user_token', mockToken);
-      await AsyncStorage.setItem('@user_data', JSON.stringify(mockUserData));
-      
-      setUser(mockUserData);
-      setIsAuthenticated(true);
-      
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error.message || 'Registration failed. Please try again.' 
-      };
-    } finally {
-      setLoading(false);
+      console.error('Logout error:', error);
     }
   };
 
@@ -187,14 +143,17 @@ export const AuthProvider = ({ children }) => {
 
   // Context provider değerleri
   const value = {
-    isAuthenticated,
     user,
+    loading,
     login,
     logout,
     register,
     updateUser,
-    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
 };

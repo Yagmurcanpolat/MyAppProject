@@ -21,7 +21,6 @@ import SettingsScreen from '../screens/SettingsScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import FeedScreen from '../screens/FeedScreen';
 import UserInterestsScreen from '../screens/UserInterestsScreen';
-import ChatDetailScreen from '../screens/ChatDetailScreen';
 
 // Theme
 import theme from '../constants/theme';
@@ -176,12 +175,12 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="ChatDetail"
-          component={ChatDetailScreen}
-          options={({ route }) => ({
+          component={() => null}
+          options={{
             headerShown: true,
-            headerTitle: route.params?.chat?.name || 'Chat',
+            headerTitle: 'Chat',
             animation: 'slide_from_right',
-          })}
+          }}
         />
         <Stack.Screen
           name="MyEvents"

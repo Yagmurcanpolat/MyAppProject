@@ -290,56 +290,48 @@ const SettingsScreen = ({ navigation }) => {
       
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hesap Ayarları</Text>
+          <Text style={styles.sectionTitle}>Hesap</Text>
           
           <TouchableOpacity 
-            style={styles.settingItem}
+            style={styles.menuItem}
             onPress={() => setShowEmailModal(true)}
           >
-            <View style={styles.settingItemContent}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons name="email" size={24} color={theme.COLORS.primary} />
-              <View style={styles.settingItemText}>
-                <Text style={styles.settingItemTitle}>E-posta</Text>
-                <Text style={styles.settingItemValue}>{email}</Text>
+              <View style={styles.menuItemText}>
+                <Text style={styles.menuItemTitle}>E-posta</Text>
+                <Text style={styles.menuItemValue}>{email}</Text>
               </View>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
           </TouchableOpacity>
-
+          
           <TouchableOpacity 
-            style={styles.settingItem}
+            style={styles.menuItem}
             onPress={() => setShowPasswordModal(true)}
           >
-            <View style={styles.settingItemContent}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons name="lock" size={24} color={theme.COLORS.primary} />
-              <Text style={styles.settingItemTitle}>Şifre</Text>
+              <View style={styles.menuItemText}>
+                <Text style={styles.menuItemTitle}>Şifre</Text>
+                <Text style={styles.menuItemValue}>••••••••</Text>
+              </View>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => navigation.navigate('UserInterests')}
-          >
-            <View style={styles.settingItemContent}>
-              <MaterialCommunityIcons name="heart" size={24} color={theme.COLORS.primary} />
-              <Text style={styles.settingItemTitle}>İlgi Alanları</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
           </TouchableOpacity>
         </View>
         
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Tercihler</Text>
           
-          <View style={styles.settingItem}>
-            <View style={styles.settingItemContent}>
+          <View style={styles.menuItem}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons 
                 name={isDarkMode ? "weather-night" : "weather-sunny"} 
                 size={24} 
                 color={theme.COLORS.primary} 
               />
-              <Text style={styles.settingItemTitle}>Karanlık Mod</Text>
+              <Text style={styles.menuItemTitle}>Karanlık Mod</Text>
             </View>
             <Switch
               trackColor={{ false: theme.COLORS.border, true: theme.COLORS.primary + '50' }}
@@ -348,33 +340,44 @@ const SettingsScreen = ({ navigation }) => {
               value={isDarkMode}
             />
           </View>
+          
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('UserInterests')}
+          >
+            <View style={styles.menuItemContent}>
+              <MaterialCommunityIcons name="tag-multiple" size={24} color={theme.COLORS.primary} />
+              <Text style={styles.menuItemTitle}>İlgi Alanları</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
+          </TouchableOpacity>
         </View>
         
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Diğer</Text>
           
-          <TouchableOpacity style={styles.settingItem}>
-            <View style={styles.settingItemContent}>
+          <TouchableOpacity style={styles.menuItem}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons name="help-circle" size={24} color={theme.COLORS.primary} />
-              <Text style={styles.settingItemTitle}>Yardım ve Destek</Text>
+              <Text style={styles.menuItemTitle}>Yardım ve Destek</Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.settingItem}>
-            <View style={styles.settingItemContent}>
+          <TouchableOpacity style={styles.menuItem}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons name="file-document" size={24} color={theme.COLORS.primary} />
-              <Text style={styles.settingItemTitle}>Kullanım Koşulları</Text>
+              <Text style={styles.menuItemTitle}>Kullanım Koşulları</Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.settingItem}>
-            <View style={styles.settingItemContent}>
+          <TouchableOpacity style={styles.menuItem}>
+            <View style={styles.menuItemContent}>
               <MaterialCommunityIcons name="information" size={24} color={theme.COLORS.primary} />
-              <Text style={styles.settingItemTitle}>Hakkında</Text>
+              <Text style={styles.menuItemTitle}>Hakkında</Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.textLight} />
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.COLORS.icon} />
           </TouchableOpacity>
         </View>
         
@@ -430,7 +433,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.SPACING.s,
     paddingHorizontal: theme.SPACING.s,
   },
-  settingItem: {
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -441,19 +444,19 @@ const styles = StyleSheet.create({
     borderRadius: theme.BORDER_RADIUS.s,
     marginBottom: theme.SPACING.s,
   },
-  settingItemContent: {
+  menuItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  settingItemText: {
+  menuItemText: {
     marginLeft: theme.SPACING.m,
   },
-  settingItemTitle: {
+  menuItemTitle: {
     fontSize: theme.SIZES.font,
     color: theme.COLORS.text,
     marginLeft: theme.SPACING.m,
   },
-  settingItemValue: {
+  menuItemValue: {
     fontSize: theme.SIZES.small,
     color: theme.COLORS.textLight,
   },

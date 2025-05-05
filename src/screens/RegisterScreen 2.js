@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theme from '../constants/theme';
-import { AuthContext } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -12,8 +12,6 @@ const RegisterScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { register } = useContext(AuthContext);
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -29,31 +27,51 @@ const RegisterScreen = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      const userData = {
-        name,
-        email,
-        password,
-      };
-
-      console.log('Attempting registration...');
-      const result = await register(userData);
-      console.log('Registration result:', result);
+      const response = await fetch('http://192.168.1.106:5001/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
       
-      if (result.success) {
-        console.log('Registration successful, navigating to Main screen...');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }],
-        });
+      // Yanıtı önce kontrol edin
+      console.log('API yanıtı:', response);
+      
+      // Yanıt metnini almaya çalışın
+      const responseText = await response.text();
+      console.log('Yanıt metni:', responseText);
+      
+      // Metin boş değilse JSON'a dönüştürmeyi deneyin
+      let data;
+      if (responseText) {
+        data = JSON.parse(responseText);
       } else {
-        throw new Error(result.error || 'Kayıt işlemi başarısız oldu');
+        throw new Error('Boş yanıt alındı');
       }
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Kayıt başarısız');
+      }
+      
+      // Token'ı AsyncStorage'a kaydet
+      await AsyncStorage.setItem('@user_token', data.token);
+      
+      // Kullanıcı bilgilerini kaydet ve isProfileCompleted false olarak ayarla
+      const userDataWithProfile = {
+        ...data,
+        isProfileCompleted: false
+      };
+      await AsyncStorage.setItem('@user_info', JSON.stringify(userDataWithProfile));
+      
+      // İlgi alanları sayfasına yönlendir
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'UserInterests' }],
+      });
     } catch (error) {
-      console.error('Registration error:', error);
-      Alert.alert(
-        "Kayıt Hatası",
-        error.message || "Kayıt işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin."
-      );
+      console.error('Kayıt hatası:', error);
+      Alert.alert("Hata", error.message);
     } finally {
       setIsLoading(false);
     }

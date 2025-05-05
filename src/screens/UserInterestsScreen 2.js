@@ -162,16 +162,6 @@ const UserInterestsScreen = ({ navigation, route }) => {
         style={styles.container}
       >
         <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <MaterialCommunityIcons 
-              name="arrow-left" 
-              size={24} 
-              color={theme.COLORS.primary} 
-            />
-          </TouchableOpacity>
           <Text style={styles.title}>İlgi Alanlarınız</Text>
           <Text style={styles.subtitle}>Size uygun etkinlikleri bulmamız için ilgi alanlarınızı seçin</Text>
         </View>
@@ -216,9 +206,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-  },
-  backButton: {
-    marginBottom: 15,
   },
   title: {
     fontSize: 24,

@@ -1,18 +1,45 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theme from '../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
+import { testConnection } from '../services/testConnection';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [serverStatus, setServerStatus] = useState(null);
+  const [debugInfo, setDebugInfo] = useState('');
   
   const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    // Check server connection when component mounts
+    checkServerConnection();
+  }, []);
+
+  const checkServerConnection = async () => {
+    try {
+      const result = await testConnection();
+      setServerStatus(result);
+      console.log('Server connection status:', result);
+      
+      // Add debug info
+      setDebugInfo(`Server status: ${result.success ? 'Connected' : 'Not connected'}\nMessage: ${result.message}`);
+    } catch (error) {
+      console.error('Error checking server connection:', error);
+      setServerStatus({ 
+        success: false, 
+        message: 'Error checking server connection',
+        error: error.message
+      });
+      setDebugInfo(`Error: ${error.message}`);
+    }
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -20,11 +47,25 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
+    if (serverStatus && !serverStatus.success) {
+      Alert.alert(
+        "Sunucu Hatası", 
+        serverStatus.error || "Sunucuya bağlanılamıyor. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.",
+        [
+          { text: "Tekrar Dene", onPress: checkServerConnection },
+          { text: "Tamam", style: "cancel" }
+        ]
+      );
+      return;
+    }
+
     setIsLoading(true);
     
     try {
+      console.log('LoginScreen: Attempting login with email:', email);
       // Context üzerinden login fonksiyonunu çağır
       const result = await login(email, password);
+      console.log('LoginScreen: Login result:', result);
       
       if (!result.success) {
         throw new Error(result.error || 'Giriş başarısız');
@@ -36,7 +77,17 @@ const LoginScreen = ({ navigation }) => {
         routes: [{ name: 'Main' }],
       });
     } catch (error) {
-      Alert.alert("Hata", error.message);
+      console.error('LoginScreen: Login error:', error);
+      
+      // Add more detailed error message
+      let errorMessage = error.message;
+      if (errorMessage.includes('Invalid email or password')) {
+        errorMessage = 'E-posta veya şifre hatalı. Lütfen doğru bilgileri girin.';
+      } else if (errorMessage.includes('Network request failed')) {
+        errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
+      }
+      
+      Alert.alert("Hata", errorMessage);
     } finally {
       setIsLoading(false);
     }

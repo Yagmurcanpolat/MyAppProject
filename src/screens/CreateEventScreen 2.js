@@ -43,12 +43,12 @@ const CreateEventScreen = ({ navigation }) => {
 
   const handleCreateEvent = async () => {
     if (!title || !description || !location || !category || !time) {
-      Alert.alert('Hata', 'Lütfen tüm zorunlu alanları doldurun');
+      Alert.alert('Error', 'Please fill all the required fields');
       return;
     }
 
     if (isOnline && !meetingLink) {
-      Alert.alert('Hata', 'Çevrimiçi etkinlikler için toplantı bağlantısı gereklidir');
+      Alert.alert('Error', 'Please provide a meeting link for online events');
       return;
     }
 
@@ -58,27 +58,30 @@ const CreateEventScreen = ({ navigation }) => {
       const eventData = {
         title,
         description,
-        location: isOnline ? meetingLink : location,
+        location,
         category,
+        categories: selectedCategories.length > 0 ? selectedCategories : [category],
         date: date.toISOString().split('T')[0],
         time,
         price: price || 'Free',
-        image: image || 'https://source.unsplash.com/random/400x200/?event',
+        image,
+        isOnline,
+        meetingLink: isOnline ? meetingLink : null,
+        capacity: capacity ? parseInt(capacity) : null,
       };
       
-      console.log('Creating event with data:', eventData);
       await eventService.createEvent(eventData);
       
       setIsLoading(false);
       Alert.alert(
-        'Başarılı', 
-        'Etkinlik başarıyla oluşturuldu', 
-        [{ text: 'Tamam', onPress: () => navigation.navigate('MyEvents') }]
+        'Success', 
+        'Event created successfully', 
+        [{ text: 'OK', onPress: () => navigation.navigate('MyEvents') }]
       );
     } catch (error) {
       setIsLoading(false);
+      Alert.alert('Error', 'Failed to create event. Please try again.');
       console.error('Error creating event:', error);
-      Alert.alert('Hata', error.message || 'Etkinlik oluşturulamadı. Lütfen tekrar deneyin.');
     }
   };
 

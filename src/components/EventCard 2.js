@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theme from '../constants/theme';
 
@@ -19,16 +19,16 @@ const EventCard = ({ event, onPress }) => {
           </Text>
         </View>
         <Card.Content style={styles.cardContent}>
-          <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+          <Title style={styles.title} numberOfLines={2} ellipsizeMode="tail">
             {event.title}
-          </Text>
+          </Title>
           <View style={styles.infoRow}>
             <MaterialCommunityIcons name="clock-outline" size={16} color={theme.COLORS.textLight} />
-            <Text style={styles.infoText}>{event.time}</Text>
+            <Paragraph style={styles.infoText}>{event.time}</Paragraph>
           </View>
           <View style={styles.infoRow}>
             <MaterialCommunityIcons name="map-marker-outline" size={16} color={theme.COLORS.textLight} />
-            <Text style={styles.infoText} numberOfLines={1}>{event.location}</Text>
+            <Paragraph style={styles.infoText} numberOfLines={1}>{event.location}</Paragraph>
           </View>
           <View style={styles.footer}>
             <View style={styles.categoryTag}>

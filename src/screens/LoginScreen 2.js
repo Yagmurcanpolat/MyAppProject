@@ -3,57 +3,40 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView,
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theme from '../constants/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 
-const RegisterScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const { login } = useContext(AuthContext);
 
-  const { register } = useContext(AuthContext);
-
-  const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Hata", "Lütfen tüm alanları doldurun");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert("Hata", "Şifreler eşleşmiyor");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Hata", "Lütfen email ve şifre giriniz");
       return;
     }
 
     setIsLoading(true);
     
     try {
-      const userData = {
-        name,
-        email,
-        password,
-      };
-
-      console.log('Attempting registration...');
-      const result = await register(userData);
-      console.log('Registration result:', result);
+      // Context üzerinden login fonksiyonunu çağır
+      const result = await login(email, password);
       
-      if (result.success) {
-        console.log('Registration successful, navigating to Main screen...');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }],
-        });
-      } else {
-        throw new Error(result.error || 'Kayıt işlemi başarısız oldu');
+      if (!result.success) {
+        throw new Error(result.error || 'Giriş başarısız');
       }
+      
+      // Giriş yapan kullanıcıyı direkt ana sayfaya yönlendir
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
     } catch (error) {
-      console.error('Registration error:', error);
-      Alert.alert(
-        "Kayıt Hatası",
-        error.message || "Kayıt işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin."
-      );
+      Alert.alert("Hata", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -76,21 +59,10 @@ const RegisterScreen = ({ navigation }) => {
           <Text style={styles.appName}>Eventify</Text>
         </View>
 
-        <Text style={styles.welcomeText}>Yeni Hesap Oluştur</Text>
-        <Text style={styles.subtitle}>Bilgilerinizi girerek etkinlikleri keşfetmeye başlayın</Text>
+        <Text style={styles.welcomeText}>Eventify'a Hoş Geldiniz</Text>
+        <Text style={styles.subtitle}>Hesabınıza giriş yapın ve etkinlikleri keşfedin</Text>
 
         <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="account-outline" size={20} color={theme.COLORS.textLight} />
-            <TextInput
-              style={styles.input}
-              placeholder="Adınız ve Soyadınız"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
-            />
-          </View>
-
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="email-outline" size={20} color={theme.COLORS.textLight} />
             <TextInput
@@ -122,36 +94,37 @@ const RegisterScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="lock-outline" size={20} color={theme.COLORS.textLight} />
-            <TextInput
-              style={styles.input}
-              placeholder="Şifre Tekrar"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-          </View>
+          <TouchableOpacity 
+            style={styles.forgotPasswordButton} 
+            onPress={() => navigation.navigate('ForgotPassword')}
+          >
+            <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.registerButton, (!name || !email || !password || !confirmPassword) && styles.registerButtonDisabled]}
-            onPress={handleRegister}
-            disabled={isLoading || !name || !email || !password || !confirmPassword}
+            style={[styles.loginButton, (!email || !password) && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={isLoading || !email || !password}
           >
             {isLoading ? (
-              <Text style={styles.buttonText}>Kaydediliyor...</Text>
+              <Text style={styles.buttonText}>Giriş Yapılıyor...</Text>
             ) : (
-              <Text style={styles.buttonText}>Kaydol</Text>
+              <Text style={styles.buttonText}>Giriş Yap</Text>
             )}
           </TouchableOpacity>
 
-          <View style={styles.loginPrompt}>
-            <Text style={styles.loginPromptText}>Zaten bir hesabınız var mı?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.loginLink}>Giriş Yap</Text>
-            </TouchableOpacity>
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>veya</Text>
+            <View style={styles.divider} />
           </View>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => navigation.navigate('Register')}
+          >
+            <Text style={styles.registerButtonText}>Yeni Hesap Oluştur</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -217,15 +190,22 @@ const styles = StyleSheet.create({
     color: theme.COLORS.text,
     paddingVertical: Platform.OS === 'ios' ? 0 : theme.SPACING.m,
   },
-  registerButton: {
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',
+    marginBottom: theme.SPACING.l,
+  },
+  forgotPasswordText: {
+    color: theme.COLORS.primary,
+    fontSize: theme.SIZES.font,
+  },
+  loginButton: {
     backgroundColor: theme.COLORS.primary,
     borderRadius: theme.BORDER_RADIUS.m,
     paddingVertical: theme.SPACING.m,
     alignItems: 'center',
-    marginTop: theme.SPACING.m,
     marginBottom: theme.SPACING.l,
   },
-  registerButtonDisabled: {
+  loginButtonDisabled: {
     backgroundColor: theme.COLORS.primaryLight,
     opacity: 0.7,
   },
@@ -234,21 +214,33 @@ const styles = StyleSheet.create({
     fontSize: theme.SIZES.medium,
     fontWeight: 'bold',
   },
-  loginPrompt: {
+  dividerContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: theme.SPACING.m,
+    alignItems: 'center',
+    marginVertical: theme.SPACING.l,
   },
-  loginPromptText: {
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.COLORS.border,
+  },
+  dividerText: {
+    marginHorizontal: theme.SPACING.m,
     color: theme.COLORS.textLight,
-    fontSize: theme.SIZES.font,
+    fontSize: theme.SIZES.small,
   },
-  loginLink: {
+  registerButton: {
+    borderWidth: 1,
+    borderColor: theme.COLORS.primary,
+    borderRadius: theme.BORDER_RADIUS.m,
+    paddingVertical: theme.SPACING.m,
+    alignItems: 'center',
+  },
+  registerButtonText: {
     color: theme.COLORS.primary,
-    fontSize: theme.SIZES.font,
+    fontSize: theme.SIZES.medium,
     fontWeight: '600',
-    marginLeft: theme.SPACING.xs,
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen; 
